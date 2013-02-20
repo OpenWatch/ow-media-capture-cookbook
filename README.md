@@ -1,15 +1,10 @@
 ow_media_capture Cookbook
 =========================
-TODO: Enter the cookbook description here.
-
-e.g.
-This cookbook makes your favorite breakfast sandwhich.
+Manages OpenWach's NodeMediaCapture application
 
 Requirements
 ------------
-TODO: List your cookbook requirements. Be sure to include any requirements this cookbook has on platforms, libraries, other cookbooks, packages, operating systems, etc.
 
-e.g.
 #### packages
 - `toaster` - ow_media_capture needs toaster to brown your bagel.
 
