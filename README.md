@@ -1,4 +1,4 @@
-ow_media_capture Cookbook
+ow_media_capture cookbook
 =========================
 Manages OpenWach's NodeMediaCapture application
 

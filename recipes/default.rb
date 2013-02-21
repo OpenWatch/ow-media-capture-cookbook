@@ -34,6 +34,13 @@ end
 
 end
 
+# Establish ssh wrapper for the git user
+git_ssh_wrapper "ow-github" do
+  user node['capture']['git_user']
+  group node['capture']['git_user']
+  ssh_key_data data_bag['deploy_key']
+end
+
 # Checkout and Deploy NodeMediaCapture application
 # See Chef's deploy resource docs: 
 # http://wiki.opscode.com/display/chef/Deploy+Resource

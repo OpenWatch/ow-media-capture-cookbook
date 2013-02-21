@@ -13,6 +13,8 @@ recipe "capture::sync", "Pulls the specified OpenWatch NodeMediaCapture code, np
   supports os
 end
 
+depends "chef-ssh-wrapper"
+
 attribute "capture/app_root",
   :display_name => "App root directory",
   :description => "Location to checkout application to",
@@ -44,9 +46,9 @@ attribute "capture/git_rev",
   :default => "HEAD"
 
 attribute "capture/git_ssh_wrapper",
-  :display_name => "Git ssh wrapper",
-  :description => "Shell script to prepare ssh for connection to git repo",
-  :default => "wrap-ssh4git.sh"
+  :display_name => "Git ssh wrapper location",
+  :description => "Output location for shell script to prep git user for connection to OpenWatch's git repo",
+  :default => "/tmp/wrap-ssh4git.sh"
 
 attribute "capture/log_path",
   :display_name => "App Log path",
