@@ -80,6 +80,14 @@ deploy_revision node['capture']['app_root'] do
         })
     end
 
+    bash "npm install" do
+      user node['capture']['git_user']
+      cwd node['capture']['app_root']
+      code <<-EOH
+      npm install
+      EOH
+    end
+
   end
 
 end
