@@ -12,15 +12,13 @@
 # Set permissions
 
 if node['capture']['method'] == 'create'
-	# Register capture as a service
-	# Set permissions
-	# Override node['capture']['restart_cmd'] to a start command?
+	# Register capture app as a service
 	service node['capture']['service_name'] do
 	  provider Chef::Provider::Service::Upstart
 	  action :enable
 	end
 
-	## Template service config file
+	## Upstart service config file
 	template "/etc/init/" + node['capture']['service_name'] + ".conf" do
   	  source "upstart.conf.erb"
   	  variables({
@@ -29,16 +27,19 @@ if node['capture']['method'] == 'create'
     	:run_script => node['capture']['run_script'],
     	:log_path => node['capture']['log_path']
   	  })
-end
+  end
 
 
 end
 
 # Establish ssh wrapper for the git user
+
+ssh_key = Chef::EncryptedDataBagItem.load("ssh-deploy", "git")
+
 git_ssh_wrapper "ow-github" do
   user node['capture']['git_user']
   group node['capture']['git_user']
-  ssh_key_data data_bag['deploy_key']
+  ssh_key_data ssh_key['id_rsa']
 end
 
 # Checkout and Deploy NodeMediaCapture application
@@ -56,8 +57,28 @@ deploy_revision node['capture']['app_root'] do
   scm_provider Chef::Provider::Git # is the default, for svn: Chef::Provider::Subversion
 
   notifies :restart, "service["+ node['capture']['service_name'] +"]"
+
+  before_restart do
+    # create default.yaml
+    template node['capture']['app_root'] + node['capture']['config_path'] do
+        source "default.yaml.erb"
+        variables({
+        :incoming_tmp => node['capture']['incoming_tmp'],
+        :temp_bucket => node['capture']['temp_bucket'],
+        :temp_reject_bucket => node['capture']['temp_reject_bucket'],
+        :site_domain => node['capture']['site_domain'],
+        :port => node['capture']['app_port'],
+        :tablename => node['capture']['couch_table_name'],
+
+        :process_api_scheme => node['capture']['process_api_scheme'],
+        :process_api_url => node['capture']['process_api_url'],
+
+        :django_api_user => node['capture']['api_user'],
+        :django_api_password => node['capture']['api_password'],
+        :django_api_url => node['capture']['api_url'],
+        })
+    end
+
+  end
+
 end
-
-# default-template.yaml -> default.yaml
-# Set user permissions
-
