@@ -9,7 +9,8 @@
 
 # Register capture as a service
 
-# Set permissions
+# Currently only supports Upstart on Ubuntu
+# TODO: Check out runit to make this platform-agnostic
 
 if node['capture']['method'] == 'create'
 	# Register capture app as a service

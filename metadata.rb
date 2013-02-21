@@ -1,6 +1,6 @@
 name             'ow_media_capture'
-maintainer       'YOUR_COMPANY_NAME'
-maintainer_email 'YOUR_EMAIL'
+maintainer       'David Brodsky'
+maintainer_email 'david@openwatch.net'
 license          'All rights reserved'
 description      'Installs/Configures ow_media_capture'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
@@ -92,7 +92,7 @@ attribute "capture/site_domain",
 attribute "capture/app_port",
   :display_name => "App port",
   :description => "",
-  :default => "5000"
+  :default => 5000
 
 attribute "capture/couch_table_name",
   :display_name => "CouchDB tablename",
