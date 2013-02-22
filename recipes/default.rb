@@ -19,7 +19,7 @@ if node['capture']['method'] == 'create'
 	  action :enable
 	end
 
-	## Upstart service config file
+	# Upstart service config file
 	template "/etc/init/" + node['capture']['service_name'] + ".conf" do
   	  source "upstart.conf.erb"
   	  variables({
@@ -29,7 +29,6 @@ if node['capture']['method'] == 'create'
     	:log_path => node['capture']['log_path']
   	  })
   end
-
 
 end
 
@@ -61,6 +60,8 @@ deploy_revision node['capture']['app_root'] do
 
   before_restart do
     # create default.yaml
+    secrets = Chef::EncryptedDataBagItem.load(node['capture']['secret_databag_name'], node['capture']['secret_item_name'])
+
     template node['capture']['app_root'] + node['capture']['config_path'] do
         source "default.yaml.erb"
         variables({
@@ -74,8 +75,8 @@ deploy_revision node['capture']['app_root'] do
         :process_api_scheme => node['capture']['process_api_scheme'],
         :process_api_url => node['capture']['process_api_url'],
 
-        :django_api_user => node['capture']['api_user'],
-        :django_api_password => node['capture']['api_password'],
+        :django_api_user => secrets['django_api_user'],
+        :django_api_password => secrets['django_api_password'],
         :django_api_url => node['capture']['api_url'],
         })
     end

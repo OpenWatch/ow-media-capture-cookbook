@@ -1,6 +1,6 @@
 name             'ow_media_capture'
-maintainer       'David Brodsky'
-maintainer_email 'david@openwatch.net'
+maintainer       'OpenWatch FPC'
+maintainer_email 'contact@openwatch.net'
 license          'All rights reserved'
 description      'Installs/Configures ow_media_capture'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
@@ -14,6 +14,7 @@ recipe "capture::sync", "Pulls the specified OpenWatch NodeMediaCapture code, np
 end
 
 depends "chef-ssh-wrapper"
+depends "user", "~> 0.3.0"
 
 # System
 
@@ -36,6 +37,11 @@ attribute "capture/service_user",
   :display_name => "service user",
   :description => "username to run app service as",
   :default => "media-capture"
+
+attribute "capture/service_user_gid",
+  :display_name => "service user groupid",
+  :description => "group for user running service",
+  :default => "500"
 
 attribute "capture/service_name",
   :display_name => "Service name",
