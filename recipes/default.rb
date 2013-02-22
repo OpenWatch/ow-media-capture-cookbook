@@ -34,7 +34,7 @@ end
 
 # Establish ssh wrapper for the git user
 
-ssh_key = Chef::EncryptedDataBagItem.load("ssh-deploy", "git")
+ssh_key = Chef::EncryptedDataBagItem.load("ssh", "git")
 
 git_ssh_wrapper "ow-github" do
   user node['capture']['git_user']
