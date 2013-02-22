@@ -1,9 +1,23 @@
+#
+# Cookbook Name:: ow_media_capture
+# Attributes:: default
+#
+# Copyright 2013, OpenWatch FPC
+#
+# Licensed under the AGPLv3
+#
+
+# Chef repo
+default['capture']['secret_databag_name'] 	= "ow_media_capture"
+default['capture']['secret_item_name'] 		= "ow_media_capture"
 
 # System
 default['capture']['app_root']      		= "/var/www/NodeMediaCapture"
 default['capture']['config_path']       	= "/config/default.yaml"
 default['capture']['git_user']      		= "git"
 default['capture']['service_user']      	= "media-capture"
+default['capture']['service_user_group']    = "media-capture"
+default['capture']['service_user_gid']      = 500
 default['capture']['service_name']      	= "ow_media_capture"
 default['capture']['git_url']      			= "git@github.com:OpenWatch/NodeMediaCapture.git"
 default['capture']['git_rev']      			= "HEAD"
@@ -26,5 +40,4 @@ default['capture']['process_api_url']		= "alpha.openwatch.net/api/"
 # Django
 default['capture']['django_api_schema']		= "https://"
 default['capture']['django_api_url']		= "alpha.openwatch.net/api"
-default['capture']['django_api_user']		= "test"
-default['capture']['django_api_password']	= "test"
+
