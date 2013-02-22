@@ -98,7 +98,7 @@ attribute "capture/site_domain",
 attribute "capture/app_port",
   :display_name => "App port",
   :description => "",
-  :default => 5000
+  :default => "5000"
 
 attribute "capture/couch_table_name",
   :display_name => "CouchDB tablename",
