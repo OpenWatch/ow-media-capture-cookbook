@@ -14,7 +14,7 @@ recipe "ow_media_capture::sync", "Pulls the specified OpenWatch NodeMediaCapture
 end
 
 depends "nginx"
-depends "git-ssh-wrapper"
+depends "git_ssh_wrapper"
 depends "user", "~> 0.3.0"
 
 # System

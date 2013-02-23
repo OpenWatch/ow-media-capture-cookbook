@@ -2,9 +2,15 @@
 
 ssh_key = Chef::EncryptedDataBagItem.load("ssh", "git")
 
+# Get group name from gid cause this library is "different"
+groups_databag_name = node['ow_users']['groups_databag_name']
+groups_item_name = node['ow_users']['groups_databag_item_name']
+gids_item = data_bag_item(groups_databag_name, groups_item_name)
+gids = gids_item["gids"]
+
 git_ssh_wrapper "ow-github" do
   owner node['ow_media_capture']['git_user']
-  group node['ow_media_capture']['git_user']
+  group gids[node['ow_media_capture']['service_user_gid'].to_s()]
   ssh_key_data ssh_key['id_rsa']
 end
 
@@ -12,8 +18,8 @@ end
 # See Chef's deploy resource docs: 
 # http://wiki.opscode.com/display/chef/Deploy+Resource
 deploy_revision node['ow_media_capture']['app_root'] do
-  repo node['ow_media_capture']['git_url']
-  revision repo node['ow_media_capture']['git_rev'] # or "<SHA hash>" or "HEAD" or "TAG_for_1.0" or (subversion) "1234"
+  repository node['ow_media_capture']['git_url']
+  revision node['ow_media_capture']['git_rev'] # or "<SHA hash>" or "HEAD" or "TAG_for_1.0" or (subversion) "1234"
   user node['ow_media_capture']['git_user']
   enable_submodules true
   migrate false
