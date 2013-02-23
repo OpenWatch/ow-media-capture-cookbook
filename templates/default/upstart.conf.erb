@@ -15,5 +15,5 @@ respawn
 
 script
   cd <%= @app_root %>
-  exec <%= @app_root %><%= @run_script %> >> <%= @log_path %> 2>&1
+  exec <%= @app_root %>/<%= @run_script %> >> <%= @log_path %> 2>&1
 end script

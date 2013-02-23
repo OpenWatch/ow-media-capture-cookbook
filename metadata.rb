@@ -6,14 +6,15 @@ description      'Installs/Configures ow_media_capture'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.1.0'
 
-recipe "capture", "Pulls the OpenWatch NodeMediaCapture code, specifies appropriate user permissions to its root, npm installs packages.json, creates default.yaml from the provided template and starts the application as a service"
-recipe "capture::sync", "Pulls the specified OpenWatch NodeMediaCapture code, npm installs packages.json, creates default.yaml from the provided template and restarts the application service"
+recipe "ow_media_capture", "Pulls the OpenWatch NodeMediaCapture code, specifies appropriate user permissions to its root, npm installs packages.json, creates default.yaml from the provided template and starts the application as a service"
+recipe "ow_media_capture::sync", "Pulls the specified OpenWatch NodeMediaCapture code, npm installs packages.json, creates default.yaml from the provided template and restarts the application service"
 
 %w{ ubuntu }.each do |os|
   supports os
 end
 
-depends "chef-ssh-wrapper"
+depends "nginx"
+depends "git-ssh-wrapper"
 depends "user", "~> 0.3.0"
 
 # System
@@ -72,6 +73,14 @@ attribute "capture/run_script",
   :display_name => "App run script",
   :description => "Script to have upstart call. A path relative to the app root",
   :default => "run.sh"
+
+# Nginx
+
+attribute "capture/listen_port",
+  :display_name => "Public Port",
+  :description => "Nginx will listen on this port for this application",
+  :default => "80"
+
 
 # NodeMediaCapture
 

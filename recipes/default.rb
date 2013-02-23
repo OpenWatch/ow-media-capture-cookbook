@@ -12,83 +12,79 @@
 # Currently only supports Upstart on Ubuntu
 # TODO: Check out runit to make this platform-agnostic
 
-if node['capture']['method'] == 'create'
-	# Register capture app as a service
-	service node['capture']['service_name'] do
-	  provider Chef::Provider::Service::Upstart
-	  action :enable
-	end
-
-	# Upstart service config file
-	template "/etc/init/" + node['capture']['service_name'] + ".conf" do
-  	  source "upstart.conf.erb"
-  	  variables({
-    	:service_user => node['capture']['service_user'],
-    	:app_root => node['capture']['app_root'],
-    	:run_script => node['capture']['run_script'],
-    	:log_path => node['capture']['log_path']
-  	  })
-  end
-
+# Upstart service config file
+template "/etc/init/" + node['ow_media_capture']['service_name'] + ".conf" do
+    source "upstart.conf.erb"
+    owner node['ow_media_capture']['service_user'] 
+    group node['ow_media_capture']['service_user_gid'] 
+    variables({
+    :service_user => node['ow_media_capture']['service_user'],
+    :app_root => node['ow_media_capture']['app_root'],
+    :run_script => node['ow_media_capture']['run_script'],
+    :log_path => node['ow_media_capture']['log_path']
+    })
 end
 
-# Establish ssh wrapper for the git user
-
-ssh_key = Chef::EncryptedDataBagItem.load("ssh", "git")
-
-git_ssh_wrapper "ow-github" do
-  user node['capture']['git_user']
-  group node['capture']['git_user']
-  ssh_key_data ssh_key['id_rsa']
+# Register capture app as a service
+service node['ow_media_capture']['service_name'] do
+  provider Chef::Provider::Service::Upstart
+  action :enable
 end
 
-# Checkout and Deploy NodeMediaCapture application
-# See Chef's deploy resource docs: 
-# http://wiki.opscode.com/display/chef/Deploy+Resource
-deploy_revision node['capture']['app_root'] do
-  repo node['capture']['git_url']
-  revision repo node['capture']['git_rev'] # or "<SHA hash>" or "HEAD" or "TAG_for_1.0" or (subversion) "1234"
-  user node['capture']['git_user']
-  enable_submodules true
-  migrate false
-  shallow_clone true
-  action :deploy # or :rollback
-  git_ssh_wrapper node['capture']['git_ssh_wrapper']
-  scm_provider Chef::Provider::Git # is the default, for svn: Chef::Provider::Subversion
-
-  notifies :restart, "service["+ node['capture']['service_name'] +"]"
-
-  before_restart do
-    # create default.yaml
-    secrets = Chef::EncryptedDataBagItem.load(node['capture']['secret_databag_name'], node['capture']['secret_item_name'])
-
-    template node['capture']['app_root'] + node['capture']['config_path'] do
-        source "default.yaml.erb"
-        variables({
-        :incoming_tmp => node['capture']['incoming_tmp'],
-        :temp_bucket => node['capture']['temp_bucket'],
-        :temp_reject_bucket => node['capture']['temp_reject_bucket'],
-        :site_domain => node['capture']['site_domain'],
-        :port => node['capture']['app_port'],
-        :tablename => node['capture']['couch_table_name'],
-
-        :process_api_scheme => node['capture']['process_api_scheme'],
-        :process_api_url => node['capture']['process_api_url'],
-
-        :django_api_user => secrets['django_api_user'],
-        :django_api_password => secrets['django_api_password'],
-        :django_api_url => node['capture']['api_url'],
-        })
-    end
-
-    bash "npm install" do
-      user node['capture']['git_user']
-      cwd node['capture']['app_root']
-      code <<-EOH
-      npm install
-      EOH
-    end
-
-  end
-
+# Make directory for ssl credentials
+directory node['ow_media_capture']['ssl_dir'] do
+  owner node['nginx']['user']
+  group node['nginx']['group']
+  recursive true
+  action :create
 end
+
+# SSL certificate and key
+cookbook_file node['ow_media_capture']['ssl_dir'] + node['ow_media_capture']['ssl_cert']  do
+  source "star_openwatch_net.crt"
+  owner node['nginx']['user']
+  group node['nginx']['group']
+  mode 0600
+  action :create
+end
+
+ssl_key = Chef::EncryptedDataBagItem.load(node['ow_media_capture']['ssl_databag_name'] , node['ow_media_capture']['ssl_databag_item_name'] )
+
+file node['ow_media_capture']['ssl_dir'] + node['ow_media_capture']['ssl_key'] do
+  owner node['nginx']['user']
+  group node['nginx']['group']
+  content ssl_key['*.openwatch.net']
+  mode 0600
+  action :create
+end
+
+# Make Nginx log dirs
+directory node['ow_media_capture']['log_dir'] do
+  owner node['nginx']['user']
+  group node['nginx']['group']
+  recursive true
+  action :create
+end
+
+# Nginx config file
+template node['nginx']['dir'] + "/sites-enabled/media_capture.nginx" do
+    source "media_capture.nginx.erb"
+    owner node['nginx']['user']
+    group node['nginx']['group']
+    variables({
+    :http_listen_port => node['ow_media_capture']['http_listen_port'],
+    :app_domain => node[:fqdn],
+    :https_listen_port => node['ow_media_capture']['https_listen_port'],
+    :ssl_cert => node['ow_media_capture']['ssl_dir'] + node['ow_media_capture']['ssl_cert'],
+    :ssl_key => node['ow_media_capture']['ssl_dir'] + node['ow_media_capture']['ssl_key'],
+    :app_root => node['ow_media_capture']['app_root'],
+    :access_log => node['ow_media_capture']['log_dir'] + node['ow_media_capture']['access_log'],
+    :error_log => node['ow_media_capture']['log_dir'] + node['ow_media_capture']['error_log'],
+    :proxy_pass => node['ow_media_capture']['proxy_pass']
+    })
+    notifies :restart, "service[nginx]"
+    action :create
+end
+
+include_recipe "ow_media_capture::sync"
+
