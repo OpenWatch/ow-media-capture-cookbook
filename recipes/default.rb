@@ -19,7 +19,7 @@ template "/etc/init/" + node['ow_media_capture']['service_name'] + ".conf" do
     group node['ow_media_capture']['service_user_gid'] 
     variables({
     :service_user => node['ow_media_capture']['service_user'],
-    :app_root => node['ow_media_capture']['app_root'],
+    :app_root => node['ow_media_capture']['app_root'] + '/current',
     :run_script => node['ow_media_capture']['run_script'],
     :log_path => node['ow_media_capture']['log_path']
     })

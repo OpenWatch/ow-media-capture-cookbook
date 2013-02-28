@@ -24,6 +24,7 @@ default['ow_media_capture']['service_user_gid']     = 500
 default['ow_media_capture']['service_name']      	= "ow_media_capture"
 default['ow_media_capture']['git_url']      		= "git@github.com:OpenWatch/NodeMediaCapture.git"
 default['ow_media_capture']['git_rev']      		= "HEAD"
+default['ow_media_capture']['git_branch']      		= "v2"
 default['ow_media_capture']['git_ssh_wrapper']   	= "/home/git/.ssh/wrappers/ow-github_deploy_wrapper.sh"
 default['ow_media_capture']['log_path']		    	= "/var/log/ow_media_capture.log"
 default['ow_media_capture']['run_script']	    	= "run.sh"

@@ -19,7 +19,7 @@ end
 # http://wiki.opscode.com/display/chef/Deploy+Resource
 deploy_revision node['ow_media_capture']['app_root'] do
   repository node['ow_media_capture']['git_url']
-  revision node['ow_media_capture']['git_rev'] # or "<SHA hash>" or "HEAD" or "TAG_for_1.0" or (subversion) "1234"
+  revision node['ow_media_capture']['git_branch']# or "<SHA hash>" or "HEAD" or "TAG_for_1.0" or (subversion) "1234"
   user node['ow_media_capture']['git_user']
   enable_submodules true
   migrate false
@@ -55,8 +55,9 @@ deploy_revision node['ow_media_capture']['app_root'] do
 
     bash "npm install" do
       user node['ow_media_capture']['git_user']
-      cwd node['ow_media_capture']['app_root']
+      cwd node['ow_media_capture']['app_root'] + '/current'
       code <<-EOH
+      npm install -g forever
       npm install
       EOH
     end
