@@ -8,7 +8,7 @@
 #
 
 # Chef repo
-default['ow_media_capture']['secret_databag_name'] 		= "ow_media_capture"
+default['ow_media_capture']['secret_databag_name'] 		= "secrets"
 default['ow_media_capture']['secret_item_name'] 		= "ow_media_capture"
 
 # SSL
@@ -24,14 +24,14 @@ default['ow_media_capture']['service_user_gid']     = 500
 default['ow_media_capture']['service_name']      	= "ow_media_capture"
 default['ow_media_capture']['git_url']      		= "git@github.com:OpenWatch/NodeMediaCapture.git"
 default['ow_media_capture']['git_rev']      		= "HEAD"
-default['ow_media_capture']['git_branch']      		= "v2"
+default['ow_media_capture']['git_branch']      		= "v2" # Can't get this working yet
 default['ow_media_capture']['git_ssh_wrapper']   	= "/home/git/.ssh/wrappers/ow-github_deploy_wrapper.sh"
 default['ow_media_capture']['log_path']		    	= "/var/log/ow_media_capture.log"
 default['ow_media_capture']['run_script']	    	= "run.sh"
 
 # Nginx
-default['ow_media_capture']['http_listen_port']     	= 80
-default['ow_media_capture']['https_listen_port']     = 443
+default['ow_media_capture']['http_listen_port']     = 80
+default['ow_media_capture']['https_listen_port']    = 443
 default['ow_media_capture']['ssl_dir']				= "/srv/ssl/"
 default['ow_media_capture']['ssl_cert']     		= "star_openwatch_net.crt"
 default['ow_media_capture']['ssl_key']     			= "star_openwatch_net.key"
@@ -53,6 +53,6 @@ default['ow_media_capture']['process_api_schema']	= "https://"
 default['ow_media_capture']['process_api_url']		= "alpha.openwatch.net/api/"
 
 # Django
-default['ow_media_capture']['django_api_schema']		= "https://"
+default['ow_media_capture']['django_api_schema']	= "https://"
 default['ow_media_capture']['django_api_url']		= "alpha.openwatch.net/api"
 

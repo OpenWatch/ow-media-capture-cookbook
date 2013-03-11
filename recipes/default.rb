@@ -31,33 +31,6 @@ service node['ow_media_capture']['service_name'] do
   action :enable
 end
 
-# Make directory for ssl credentials
-directory node['ow_media_capture']['ssl_dir'] do
-  owner node['nginx']['user']
-  group node['nginx']['group']
-  recursive true
-  action :create
-end
-
-# SSL certificate and key
-cookbook_file node['ow_media_capture']['ssl_dir'] + node['ow_media_capture']['ssl_cert']  do
-  source "star_openwatch_net.crt"
-  owner node['nginx']['user']
-  group node['nginx']['group']
-  mode 0600
-  action :create
-end
-
-ssl_key = Chef::EncryptedDataBagItem.load(node['ow_media_capture']['ssl_databag_name'] , node['ow_media_capture']['ssl_databag_item_name'] )
-
-file node['ow_media_capture']['ssl_dir'] + node['ow_media_capture']['ssl_key'] do
-  owner node['nginx']['user']
-  group node['nginx']['group']
-  content ssl_key['*.openwatch.net']
-  mode 0600
-  action :create
-end
-
 # Make Nginx log dirs
 directory node['ow_media_capture']['log_dir'] do
   owner node['nginx']['user']

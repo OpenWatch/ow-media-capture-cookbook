@@ -19,7 +19,7 @@ end
 # http://wiki.opscode.com/display/chef/Deploy+Resource
 deploy_revision node['ow_media_capture']['app_root'] do
   repository node['ow_media_capture']['git_url']
-  revision node['ow_media_capture']['git_branch']# or "<SHA hash>" or "HEAD" or "TAG_for_1.0" or (subversion) "1234"
+  revision node['ow_media_capture']['git_rev'] # or "<SHA hash>" or "HEAD" or "TAG_for_1.0" or (subversion) "1234"
   user node['ow_media_capture']['git_user']
   enable_submodules true
   migrate false
@@ -28,40 +28,38 @@ deploy_revision node['ow_media_capture']['app_root'] do
   git_ssh_wrapper node['ow_media_capture']['git_ssh_wrapper']
   scm_provider Chef::Provider::Git # is the default, for svn: Chef::Provider::Subversion
 
-  notifies :restart, "service["+ node['ow_media_capture']['service_name'] +"]"
+  # notifies :restart, "service["+ node['ow_media_capture']['service_name'] +"]"
 
-  before_restart do
-    # create default.yaml
-    secrets = Chef::EncryptedDataBagItem.load(node['ow_media_capture']['secret_databag_name'], node['ow_media_capture']['secret_item_name'])
+end
 
-    template node['ow_media_capture']['app_root'] + node['ow_media_capture']['config_path'] do
-        source "default.yaml.erb"
-        variables({
-        :incoming_tmp => node['ow_media_capture']['incoming_tmp'],
-        :temp_bucket => node['ow_media_capture']['temp_bucket'],
-        :temp_reject_bucket => node['ow_media_capture']['temp_reject_bucket'],
-        :site_domain => node['ow_media_capture']['site_domain'],
-        :port => node['ow_media_capture']['app_port'],
-        :tablename => node['ow_media_capture']['couch_table_name'],
+# create default.yaml
+secrets = Chef::EncryptedDataBagItem.load(node['ow_media_capture']['secret_databag_name'], node['ow_media_capture']['secret_item_name'])
 
-        :process_api_scheme => node['ow_media_capture']['process_api_scheme'],
-        :process_api_url => node['ow_media_capture']['process_api_url'],
+template node['ow_media_capture']['app_root'] + node['ow_media_capture']['config_path'] do
+    source "default.yaml.erb"
+    variables({
+    :incoming_tmp => node['ow_media_capture']['incoming_tmp'],
+    :temp_bucket => node['ow_media_capture']['temp_bucket'],
+    :temp_reject_bucket => node['ow_media_capture']['temp_reject_bucket'],
+    :site_domain => node['ow_media_capture']['site_domain'],
+    :port => node['ow_media_capture']['app_port'],
+    :tablename => node['ow_media_capture']['couch_table_name'],
 
-        :django_api_user => secrets['django_api_user'],
-        :django_api_password => secrets['django_api_password'],
-        :django_api_url => node['ow_media_capture']['api_url'],
-        })
-    end
+    :process_api_scheme => node['ow_media_capture']['process_api_scheme'],
+    :process_api_url => node['ow_media_capture']['process_api_url'],
 
-    bash "npm install" do
-      user node['ow_media_capture']['git_user']
-      cwd node['ow_media_capture']['app_root'] + '/current'
-      code <<-EOH
-      npm install -g forever
-      npm install
-      EOH
-    end
+    :django_api_user => secrets['django_api_user'],
+    :django_api_password => secrets['django_api_password'],
+    :django_api_url => node['ow_media_capture']['api_url'],
+    })
+end
 
-  end
-
+# Install npm packages
+bash "npm install" do
+  user node['ow_media_capture']['git_user']
+  cwd node['ow_media_capture']['app_root'] + '/current'
+  code <<-EOH
+  npm install forever
+  npm install
+  EOH
 end
