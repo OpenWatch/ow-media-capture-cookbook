@@ -20,13 +20,14 @@ default['ow_media_capture']['app_root']      		= "/var/www/NodeMediaCapture"
 default['ow_media_capture']['config_path']       	= "/config/default.yaml"
 default['ow_media_capture']['git_user']      		= "git"
 default['ow_media_capture']['service_user']      	= "media-capture"
+default['ow_media_capture']['service_user_group']  = "service_users"
 default['ow_media_capture']['service_user_gid']     = 500
 default['ow_media_capture']['service_name']      	= "ow_media_capture"
 default['ow_media_capture']['git_url']      		= "git@github.com:OpenWatch/NodeMediaCapture.git"
 default['ow_media_capture']['git_rev']      		= "HEAD"
 default['ow_media_capture']['git_branch']      		= "v2" # Can't get this working yet
 default['ow_media_capture']['git_ssh_wrapper']   	= "/home/git/.ssh/wrappers/ow-github_deploy_wrapper.sh"
-default['ow_media_capture']['log_path']		    	= "/var/log/ow_media_capture.log"
+default['ow_media_capture']['app_log_file']		    = "ow_media_capture.log"
 default['ow_media_capture']['run_script']	    	= "run.sh"
 
 # Nginx
@@ -49,8 +50,8 @@ default['ow_media_capture']['app_port']				= 5000
 default['ow_media_capture']['couch_table_name']		= "recordings"
 
 # NodeMediaProcess
-default['ow_media_capture']['process_api_schema']	= "https://"
-default['ow_media_capture']['process_api_url']		= "alpha.openwatch.net/api/"
+default['ow_media_capture']['process_api_schema']	= "http://"
+default['ow_media_capture']['process_api_url']		= "localhost/api/"
 
 # Django
 default['ow_media_capture']['django_api_schema']	= "https://"

@@ -16,6 +16,7 @@ end
 depends "nginx"
 depends "git_ssh_wrapper"
 depends "user", "~> 0.3.0"
+depends "npm"
 
 # System
 

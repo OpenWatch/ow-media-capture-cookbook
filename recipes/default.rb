@@ -21,20 +21,15 @@ template "/etc/init/" + node['ow_media_capture']['service_name'] + ".conf" do
     :service_user => node['ow_media_capture']['service_user'],
     :app_root => node['ow_media_capture']['app_root'] + '/current',
     :run_script => node['ow_media_capture']['run_script'],
-    :log_path => node['ow_media_capture']['log_path']
+    :log_path => node['ow_media_capture']['log_dir'] + node['ow_media_capture']['app_log_file']
     })
 end
 
-# Register capture app as a service
-service node['ow_media_capture']['service_name'] do
-  provider Chef::Provider::Service::Upstart
-  action :enable
-end
-
-# Make Nginx log dirs
+# Make log dir
 directory node['ow_media_capture']['log_dir'] do
   owner node['nginx']['user']
-  group node['nginx']['group']
+  group node['ow_media_capture']['service_user_gid']
+  mode "770" 
   recursive true
   action :create
 end

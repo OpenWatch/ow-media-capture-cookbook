@@ -1,5 +1,7 @@
 # Establish ssh wrapper for the git user
 
+app_root = node['ow_media_capture']['app_root']
+
 ssh_key = Chef::EncryptedDataBagItem.load("ssh", "git")
 
 # Get group name from gid cause this library is "different"
@@ -17,10 +19,11 @@ end
 # Checkout and Deploy NodeMediaCapture application
 # See Chef's deploy resource docs: 
 # http://wiki.opscode.com/display/chef/Deploy+Resource
-deploy_revision node['ow_media_capture']['app_root'] do
+deploy_revision app_root do
   repository node['ow_media_capture']['git_url']
   revision node['ow_media_capture']['git_rev'] # or "<SHA hash>" or "HEAD" or "TAG_for_1.0" or (subversion) "1234"
   user node['ow_media_capture']['git_user']
+  group node['ow_media_capture']['service_user_group']
   enable_submodules true
   migrate false
   shallow_clone true
@@ -35,31 +38,75 @@ end
 # create default.yaml
 secrets = Chef::EncryptedDataBagItem.load(node['ow_media_capture']['secret_databag_name'], node['ow_media_capture']['secret_item_name'])
 
-template node['ow_media_capture']['app_root'] + node['ow_media_capture']['config_path'] do
+template app_root + '/current' + node['ow_media_capture']['config_path'] do
     source "default.yaml.erb"
+    user node['ow_media_capture']['git_user']
+    group node['ow_media_capture']['service_user_group']
+    mode "440"
     variables({
     :incoming_tmp => node['ow_media_capture']['incoming_tmp'],
     :temp_bucket => node['ow_media_capture']['temp_bucket'],
     :temp_reject_bucket => node['ow_media_capture']['temp_reject_bucket'],
     :site_domain => node['ow_media_capture']['site_domain'],
-    :port => node['ow_media_capture']['app_port'],
-    :tablename => node['ow_media_capture']['couch_table_name'],
+    :app_port => node['ow_media_capture']['app_port'], ## attr
+    :couch_table_name => node['ow_media_capture']['couch_table_name'], ## attr
 
-    :process_api_scheme => node['ow_media_capture']['process_api_scheme'],
+    :process_api_schema => node['ow_media_capture']['process_api_schema'], ## attr
     :process_api_url => node['ow_media_capture']['process_api_url'],
 
+    :django_api_schema => node['ow_media_capture']['django_api_schema'],
     :django_api_user => secrets['django_api_user'],
     :django_api_password => secrets['django_api_password'],
-    :django_api_url => node['ow_media_capture']['api_url'],
+    :django_api_url => node['ow_media_capture']['django_api_url'] ##
     })
 end
 
-# Install npm packages
-bash "npm install" do
-  user node['ow_media_capture']['git_user']
-  cwd node['ow_media_capture']['app_root'] + '/current'
-  code <<-EOH
-  npm install forever
-  npm install
-  EOH
+# Create directories for temporary media upload storage
+directory node['ow_media_capture']['temp_bucket'] do
+  owner node['ow_media_capture']['service_user'] 
+  group node['ow_media_capture']['service_user_group']
+  mode "770"
+  action :create
+end
+
+directory node['ow_media_capture']['temp_reject_bucket'] do
+  owner node['ow_media_capture']['service_user'] 
+  group node['ow_media_capture']['service_user_group']
+  mode "770"
+  action :create
+end
+
+npm_package "package.json" do
+    path app_root + '/current'
+    action :install_from_json
+end
+
+npm_package "forever" do
+    version "0.10.0"
+    path app_root + '/current'
+    action :install_local
+  end
+
+# Set permissions on node_modules dir
+directory app_root + '/current/node_modules' do
+  owner node['ow_media_capture']['service_user'] 
+  group node['ow_media_capture']['service_user_group']
+  mode "770"
+  recursive true
+  action :create
+end
+
+# Set permissions on config dir
+directory app_root + '/current/config' do
+  owner node['ow_media_capture']['service_user'] 
+  group node['ow_media_capture']['service_user_group']
+  mode "770"
+  recursive true
+  action :create
+end
+
+# Register capture app as a service
+service node['ow_media_capture']['service_name'] do
+  provider Chef::Provider::Service::Upstart
+  action :start
 end
