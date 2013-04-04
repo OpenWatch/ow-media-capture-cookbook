@@ -41,7 +41,7 @@ template node['nginx']['dir'] + "/sites-enabled/media_capture.nginx" do
     group node['nginx']['group']
     variables({
     :http_listen_port => node['ow_media_capture']['http_listen_port'],
-    :app_domain => node[:fqdn],
+    :app_domain => node['ow_media_capture']['app_domain'],
     :https_listen_port => node['ow_media_capture']['https_listen_port'],
     :ssl_cert => node['ow_media_capture']['ssl_dir'] + node['ow_media_capture']['ssl_cert'],
     :ssl_key => node['ow_media_capture']['ssl_dir'] + node['ow_media_capture']['ssl_key'],

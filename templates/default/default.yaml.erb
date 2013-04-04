@@ -6,11 +6,13 @@ MediaCapture:
   incomingTmp: "<%= @incoming_tmp %>"
   tempBucket: "<%= @temp_bucket %>"
   tempRejectBucket: "<%= @temp_reject_bucket %>"
-  siteDomain: <%= @site_domain %>
+  siteDomain: "<%= @site_domain %>"
   port: <%= @app_port %>
 
   # Database
-  tableName: <%= @couch_table_name %>
+  tableName: "<%= @couch_table_name %>"
+  # Sentry / Raven config
+  sentryDSN: "<%= @sentry_dsn %>"
 
 
 MediaProcess:
@@ -21,15 +23,15 @@ MediaProcess:
 
   # Media Processing Server
   #    Turned into: api_schema + api_url
-  api_schema: <%= @process_api_schema %>
+  api_schema: "<%= @process_api_schema %>"
   api_url: "<%= @process_api_url %>"
 
 Django:
 
   # OpenWatch API
   #    Turned into: api_schema + api_user + ':' + api_password + '@' + api_url
-  api_schema: <%= @django_api_schema %>
-  api_user: <%= @django_api_user %>
-  api_password: <%= @django_api_password %>
+  api_schema: "<%= @django_api_schema %>"
+  api_user: "<%= @django_api_user %>"
+  api_password: "<%= @django_api_password %>"
   api_url: "<%= @django_api_url %>"
 

@@ -13,7 +13,7 @@ default['ow_media_capture']['secret_item_name'] 		= "ow_media_capture"
 
 # SSL
 default['ow_media_capture']['ssl_databag_name'] 		= "ssl"
-default['ow_media_capture']['ssl_databag_item_name'] 		= "ssl"
+default['ow_media_capture']['ssl_databag_item_name'] 	= "ssl"
 
 # System
 default['ow_media_capture']['app_root']      		= "/var/www/NodeMediaCapture"
@@ -40,12 +40,13 @@ default['ow_media_capture']['log_dir']     			= "/var/log/ow/"
 default['ow_media_capture']['access_log']     		= "nginx_access_media_capture.log"
 default['ow_media_capture']['error_log']     		= "nginx_error_media_capture.log"
 default['ow_media_capture']['proxy_pass']     		= "http://localhost:5000"
+default['ow_media_capture']['app_domain']			= "capture.openwatch.net"
 
 # NodeMediaCapture
 default['ow_media_capture']['incoming_tmp']			= "/tmp"
 default['ow_media_capture']['temp_bucket']			= "/internment"
 default['ow_media_capture']['temp_reject_bucket']	= "/internment-rejected" 
-default['ow_media_capture']['site_domain']			= "localhost"
+default['ow_media_capture']['node_domain']			= "localhost"
 default['ow_media_capture']['app_port']				= 5000
 default['ow_media_capture']['couch_table_name']		= "recordings"
 

@@ -47,17 +47,18 @@ template app_root + '/current' + node['ow_media_capture']['config_path'] do
     :incoming_tmp => node['ow_media_capture']['incoming_tmp'],
     :temp_bucket => node['ow_media_capture']['temp_bucket'],
     :temp_reject_bucket => node['ow_media_capture']['temp_reject_bucket'],
-    :site_domain => node['ow_media_capture']['site_domain'],
-    :app_port => node['ow_media_capture']['app_port'], ## attr
-    :couch_table_name => node['ow_media_capture']['couch_table_name'], ## attr
+    :site_domain => node['ow_media_capture']['node_domain'],
+    :app_port => node['ow_media_capture']['app_port'],
+    :couch_table_name => node['ow_media_capture']['couch_table_name'],
+    :sentry_dsn => secrets['sentry_dsn'],
 
-    :process_api_schema => node['ow_media_capture']['process_api_schema'], ## attr
+    :process_api_schema => node['ow_media_capture']['process_api_schema'],
     :process_api_url => node['ow_media_capture']['process_api_url'],
 
     :django_api_schema => node['ow_media_capture']['django_api_schema'],
     :django_api_user => secrets['django_api_user'],
     :django_api_password => secrets['django_api_password'],
-    :django_api_url => node['ow_media_capture']['django_api_url'] ##
+    :django_api_url => node['ow_media_capture']['django_api_url']
     })
 end
 
