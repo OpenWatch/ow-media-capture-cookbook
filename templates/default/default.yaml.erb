@@ -24,7 +24,9 @@ MediaProcess:
   # Media Processing Server
   #    Turned into: api_schema + api_url
   api_schema: "<%= @process_api_schema %>"
-  api_url: "<%= @process_api_url %>"
+  api_url: "<%= @process_api_host %>:<%= @process_api_port %>/"
+  api_user: "<%= @process_api_user %>"
+  api_password: "<%= @process_api_password %>"
 
 Django:
 

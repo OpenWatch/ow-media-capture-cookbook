@@ -52,9 +52,10 @@ default['ow_media_capture']['couch_table_name']		= "recordings"
 
 # NodeMediaProcess
 default['ow_media_capture']['process_api_schema']	= "http://"
-default['ow_media_capture']['process_api_url']		= "localhost/api/"
+default['ow_media_capture']['process_api_host']		= "localhost"
+default['ow_media_capture']['process_api_port']		= 5001
 
 # Django
 default['ow_media_capture']['django_api_schema']	= "https://"
-default['ow_media_capture']['django_api_url']		= "alpha.openwatch.net/api"
+default['ow_media_capture']['django_api_url']		= "alpha.openwatch.net/api/"
 
