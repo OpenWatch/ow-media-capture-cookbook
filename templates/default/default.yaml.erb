@@ -13,6 +13,8 @@ MediaCapture:
   tableName: "<%= @couch_table_name %>"
   # Sentry / Raven config
   sentryDSN: "<%= @sentry_dsn %>"
+  capture_url: "https://<%= node[:fqdn] %>/"
+
 
 
 MediaProcess:
