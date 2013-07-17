@@ -44,6 +44,7 @@ template app_root + node['ow_media_capture']['config_path'] do
     group node['ow_media_capture']['service_user_group']
     mode "440"
     variables({
+    :app_domain => node['ow_media_capture']['app_domain'],
     :incoming_tmp => node['ow_media_capture']['incoming_tmp'],
     :temp_bucket => node['ow_media_capture']['temp_bucket'],
     :temp_reject_bucket => node['ow_media_capture']['temp_reject_bucket'],
