@@ -81,14 +81,14 @@ end
 directory node['ow_media_capture']['temp_bucket'] do
   owner node['ow_media_capture']['service_user'] 
   group node['ow_media_capture']['service_user_group']
-  mode "774"
+  mode "775"
   action :create
 end
 
 directory node['ow_media_capture']['temp_reject_bucket'] do
   owner node['ow_media_capture']['service_user'] 
   group node['ow_media_capture']['service_user_group']
-  mode "774"
+  mode "775"
   action :create
 end
 
